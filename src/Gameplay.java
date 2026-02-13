@@ -1,40 +1,39 @@
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class PlayGame {
+public class Gameplay {
     private Random rand = new Random();
-    private Node[] nodes = new Node[54];
-    private Tile[] tiles = new Tile[19];
     private Board board;
     private List<Player> players = new ArrayList<>();
     private int turn = 0;
     private int maxTurns;
 
-    public PlayGame (int maxTurns, List<Player> players, Board board) {
+    public Gameplay (int maxTurns, List<Player> players, Board board) {
         this.board = board;
-        this.nodes = board.getNodes();
-        this.tiles = board.getTiles();
         this.maxTurns = maxTurns;
         this.players = players;
     }
 
     public void runGame() {
         turn = 1;
+        board.setTurn(turn);
         roundOne();
         printPoints();
         if (maxTurns > 1) {
             turn++;
+            board.setTurn(turn);
             roundTwo();
             printPoints();
         }
         if (maxTurns > 2) {
             while (turn < maxTurns) {
                 turn++;
+                board.setTurn(turn);
                 for (Player player : players) {
                     System.out.print("Round " + turn + " / ");
                     if (playRound(player)) {
+                        System.out.println();
                         System.out.println("Player " + player.getPlayerNumber() + " wins!\n");
                         printResults();
                         return;
@@ -46,126 +45,105 @@ public class PlayGame {
         printResults();
     }
 
-    public void printPoints() {
-        System.out.print("Victory points: ");
-        for (Player player : players) {
-            System.out.print(player.getPoints() + ", ");
-        }
-        System.out.println();
-    }
-
-    public void printResults() {
-        System.out.print("Final points: ");
-        for (Player p : players) {
-            System.out.print(p.getPoints() + ", ");
-        }
-        System.out.println("\n");
-        System.out.println(players.get(0).getSettlementNodes());
-        System.out.println(players.get(0).getCityNodes());
-        for (Road road: players.get(0).getRoads()) {
-            System.out.print(road.getStart() + " ");
-        }
-    }
-
-    public int rollDice() {
+    private int rollDice() {
         int die1 = rand.nextInt(6 - 1 + 1) + 1;
         int die2 = rand.nextInt(6 - 1 + 1) + 1;
         int number = die1 + die2;
         return number;
     }
 
-    public int chooseNode() {
+    private Node chooseNode() {
         int counter = 0;
         while (true) {
             counter += 1;
             int node = rand.nextInt(54); //Number from 0 to 53
-            int tileCount = nodes[node].getTileSize();
+            int tileCount = board.getNodes(node).getTileSize();
             if (tileCount == 3) {
-                return node;
+                return board.getNodes(node);
             }
             else if (counter >= 5 && tileCount == 2) {
-                return node;
+                return board.getNodes(node);
             }
             else if (counter >= 10 && tileCount == 1) {
-                return node;
+                return board.getNodes(node);
             }
 
         }
     }
 
-    public int chooseAdjacentNode(int node) {
-        ArrayList<Integer> nodeList = (ArrayList)nodes[node].getAdjacentNodes();
+    private Node chooseAdjacentNode(Node node) {
+        ArrayList<Integer> nodeList = (ArrayList)node.getAdjacentNodes();
         int adjNode = nodeList.get(rand.nextInt(nodeList.size()));
-        return adjNode;
+        return board.getNodes(adjNode);
     }
 
-    public ArrayList<Integer> getSettlementNodes(Player player) {
-        ArrayList<Integer> nodes = new ArrayList<>();
-        for (int i: player.getSettlementNodes()) {
-            nodes.add(i);
+    private ArrayList<Node> getSettlementNodes(Player player) {
+        ArrayList<Node> nodes = new ArrayList<>();
+        for (Node node: player.getSettlements()) {
+            nodes.add(node);
         }
         return nodes;
     }
 
-    public ArrayList<Integer> getRoadNodes(Player player) {
-        ArrayList<Integer> nodes = new ArrayList<>();
+    private ArrayList<Node> getRoadNodes(Player player) {
+        ArrayList<Node> nodes = new ArrayList<>();
         for (Road road: player.getRoads()) {
             nodes.add(road.getEnd());
         }
         return nodes;
     }
 
-    public void roundOne() {
+    private void roundOne() {
         for (Player player: players) {
             while (true) {
-                int node = chooseNode();
-                if (player.placeSettlement(node) == true) {
+                Node node = chooseNode();
+                if (board.placeSettlement(player, node) == true) {
                     while (true) {
-                        int end =  chooseAdjacentNode(node);
-                        if (player.placeRoad(node, end) == true) {
+                        Node end = chooseAdjacentNode(node);
+                        if (board.placeRoad(player, node, end) == true) {
                             System.out.println("Round 1 / " + player.getPlayerNumber() + ": built settlement at " + node + ", built road at (" + node + ", " + end + ")");
                             break;
                         }
                     }
-                    player.checkWin();
+                    isGameOver(player);
                     break;
                 }
             }
         }
     }
 
-    public void roundTwo() {
+    private void roundTwo() {
         int counter = 0;
         for (int i=players.size()-1;i>=0;i--) {
             while (true) {
-                int node = chooseNode();
-                if (players.get(i).placeSettlement(node) == true) {
+                Node node = chooseNode();
+                if (board.placeSettlement(players.get(i), node) == true) {
                     while (true) {
-                        int end = chooseAdjacentNode(node);
-                        if (players.get(i).placeRoad(node, end) == true) {
+                        Node end = chooseAdjacentNode(node);
+                        if (board.placeRoad(players.get(i), node, end) == true) {
                             System.out.println("Round 2 / " + players.get(i).getPlayerNumber() + ": built settlement at " + node + ", built road at (" + node + ", " + end + ")");
                             break;
                         }
                     }
-                    players.get(i).checkWin();
+                    isGameOver(players.get(i));
                     break;
                 }
             }
         }
     }
 
-    public boolean playRound(Player player) {
+    private boolean playRound(Player player) {
         System.out.print(player.getPlayerNumber() + ": ");
         makeResources();
         boolean built = false;
         int action = -100;
-        ArrayList<Integer> settlementNodes = getSettlementNodes(player);
-        ArrayList<Integer> roadNodes = getRoadNodes(player);
+        ArrayList<Node> settlementNodes = getSettlementNodes(player);
+        ArrayList<Node> roadNodes = getRoadNodes(player);
 
         if (player.getTotalResources() > 7) {
-            ArrayList<Boolean> actions = player.checkActions(getSettlementNodes(player), getRoadNodes(player));
-            while (actions.size() > 0) {
-                if (player.checkWin()) {
+            List<Boolean> actions = board.checkActions(player, getSettlementNodes(player), getRoadNodes(player)); //Create new instances of settlement and road nodes to not alter originals
+            while (actions.size() > 0 && player.getTotalResources() > 7) {
+                if (isGameOver(player)) {
                     return true;
                 }
                 action = rand.nextInt(actions.size());
@@ -177,34 +155,35 @@ public class PlayGame {
                 }
                 action = -100;
             }
+
             if (action == 1) { //Build city
                 while (settlementNodes.size() > 0) {
                     int random = rand.nextInt(settlementNodes.size());
-                    int node = settlementNodes.get(random);
+                    Node node = settlementNodes.get(random);
                     settlementNodes.remove(random);
-                    if (player.buildCity(node)) {
+                    if (board.upgradeCity(player, node)) {
                         System.out.print(", upgraded city at node " + node);
                         break;
                     }
                 }
             }
             else if (action == 0 || action == 2) {
-                while (roadNodes.size() > 0) {
-                    if (player.checkWin()) {
+                while (roadNodes.size() > 0 && player.getTotalResources() > 7) {
+                    if (isGameOver(player)) {
                         return true;
                     }
                     int random = rand.nextInt(roadNodes.size());
-                    int node = roadNodes.get(random);
+                    Node node = roadNodes.get(random);
                     roadNodes.remove(random);
                     if (action == 0) { //Build settlement
-                        if (player.buildSettlement(node)) {
+                        if (board.placeSettlement(player, node)) {
                             System.out.print(", built settlement at node " + node);
                             break;
                         }
                     }
                     else if (action == 2) { //Build road
-                        for (int end : nodes[node].getAdjacentNodes()) {
-                            if (player.buildRoad(node, end)) {
+                        for (int end : node.getAdjacentNodes()) {
+                            if (board.placeRoad(player, node, board.getNodes(end))) {
                                 System.out.print(", built road at (" + node + ", " + end + ")");
                                 break;
                             }
@@ -212,15 +191,16 @@ public class PlayGame {
                     }
                 }
             }
+
         }
 //        System.out.println();
 //        board.printResources();
-        checkLongestRoad();
+        board.calcLongestRoad(players);
         System.out.println();
-        return player.checkWin();
+        return isGameOver(player);
     }
 
-    public void makeResources() {
+    private void makeResources() {
         int number = rollDice();
         System.out.print("Rolled " + number);
         int total;
@@ -228,12 +208,12 @@ public class PlayGame {
         Player owner2 = null;
         switch (number) {
             case 6:
-                owner1 = tiles[8].getOwner();
-                owner2 = tiles[10].getOwner();
-                total = tiles[8].getResourcesProduced(nodes) + tiles[10].getResourcesProduced(nodes);
+                owner1 = board.getTiles()[8].getOwner();
+                owner2 = board.getTiles()[10].getOwner();
+                total = board.getTiles()[8].getResourcesProduced() + board.getTiles()[10].getResourcesProduced();
                 if (board.checkResources(Resource.ORE, -total) || (owner1 == owner2) || owner1 == null || owner2 == null) {
-                    tiles[8].makeResources(nodes); //ore
-                    tiles[10].makeResources(nodes); //ore
+                    board.getTiles()[8].makeResources(board); //ore
+                    board.getTiles()[10].makeResources(board); //ore
                 }
 
                 total = 0;
@@ -242,38 +222,50 @@ public class PlayGame {
 //                tiles[16].makeResources(nodes); //desert
                 break;
             case 8:
-                owner1 = tiles[2].getOwner();
-                owner2 = tiles[14].getOwner();
-                total = tiles[2].getResourcesProduced(nodes) + tiles[14].getResourcesProduced(nodes);
+                owner1 = board.getTiles()[2].getOwner();
+                owner2 = board.getTiles()[14].getOwner();
+                total = board.getTiles()[2].getResourcesProduced() + board.getTiles()[14].getResourcesProduced();
                 if (board.checkResources(Resource.BRICK, -total) || (owner1 == owner2) || owner1 == null || owner2 == null) {
-                    tiles[2].makeResources(nodes); //brick
-                    tiles[14].makeResources(nodes); //brick
+                    board.getTiles()[2].makeResources(board); //brick
+                    board.getTiles()[14].makeResources(board); //brick
                 }
                 total = 0;
                 break;
             default:
-                for (Tile tile : tiles) {
+                for (Tile tile : board.getTiles()) {
                     if (number == tile.getNumber()) {
-                        tile.makeResources(nodes);
+                        tile.makeResources(board);
                     }
                 }
         }
     }
 
-    public void checkLongestRoad() {
-        Player owner = null;
-        int longestRoad = 0;
-        int length = 0;
-        for (Player player: players) {
-            length = player.calcLongestRoad();
-            if (length > longestRoad) {
-                owner = player;
-                longestRoad = length;
-            }
-            else if (length == longestRoad) {
-                owner = null;
-            }
+    public void printPoints() {
+        System.out.print("Victory points: ");
+        for (Player player : players) {
+            System.out.print(player.calcPoints(players, board) + ", ");
         }
-        board.setLongestRoad(owner);
+        System.out.println();
     }
+
+    public void printResults() {
+        System.out.print("Final points: ");
+        for (Player p : players) {
+            System.out.print(p.calcPoints(players, board) + ", ");
+        }
+        System.out.println("\n");
+        System.out.println(players.get(0).getSettlements());
+        System.out.println(players.get(0).getCities());
+        for (Road road: players.get(0).getRoads()) {
+            System.out.print(road.getStart() + " ");
+        }
+    }
+
+    public boolean isGameOver(Player player) {
+        if (player.calcPoints(players, board) >= 10) {
+            return true;
+        }
+        return false;
+    }
+
 }

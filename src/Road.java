@@ -1,31 +1,25 @@
 import java.util.ArrayList;
 
 public class Road {
-    private int start;
-    private int end;
+    private Node start;
+    private Node end;
     private Player owner;
 
-    public Road(int start, int end, Player owner) {
+    public Road(Node start, Node end, Player owner) { //Constructor
         this.start = start;
         this.end = end;
         this.owner = owner;
     }
 
-    public int getStart() {
+    public Node getStart() { //Gets start
         return start;
-    }
-    public void setStart(int start) {
-        this.start = start;
-    }
-    public int getEnd() {
+    } //Gets start
+    public Node getEnd() {
         return end;
-    }
-    public void setEnd(int end) {
-        this.end = end;
-    }
+    } //Gets end
     public Player getOwner() {
         return owner;
-    }
+    } //Gets owner
     public void print() {
         System.out.println(start + ", " + end);
     }

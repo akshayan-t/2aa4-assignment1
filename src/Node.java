@@ -8,7 +8,6 @@ public class Node {
     private List<Road> roads = new ArrayList<>();
     private List<Integer> adjacentNodes = new ArrayList<>();
     private List<Tile> tiles = new ArrayList<>();
-    private List<Resource> resources = new ArrayList<>();
 
     public Node(List<Integer> adjacentNodes) {
         this.adjacentNodes = new ArrayList<>(adjacentNodes);
@@ -16,41 +15,35 @@ public class Node {
 
     public void addTile(Tile tile) {
         tiles.add(tile);
-    }
+    } //Adds tile to connected tile list
     public int getTileSize() {
         return tiles.size();
-    }
+    } //Gets number of tiles node is connected to
     public void setNumber(int number) {
         this.number = number;
-    }
+    } //Sets node number
 
     public int getNumber() {
         return number;
-    }
+    } //Gets number
 
-    public void setResources() {
-        for (Tile tile: tiles) {
-            resources.add(tile.getResource());
-        }
-    }
-
-    public void setBuilding(Building building) {
+    public void setBuilding(Building building) { //Sets building
         this.building = building;
     }
 
-    public void setOwner(Player owner) {
+    public void setOwner(Player owner) { //Sets owner
         this.owner = owner;
     }
 
-    public Building getBuilding() {
+    public Building getBuilding() { //Gets building
         return building;
     }
 
-    public Player getOwner() {
+    public Player getOwner() { //Gets owner
         return owner;
     }
 
-    public void addRoad(Road road) {
+    public void addRoad(Road road) { //Adds road to list
         this.roads.add(road);
     }
 
@@ -63,11 +56,15 @@ public class Node {
         return false;
     }
 
-    public List<Road> getRoads() {
+    public List<Road> getRoads() { //Gets list of roads
         return roads;
     }
 
-    public List<Integer> getAdjacentNodes() {
+    public List<Integer> getAdjacentNodes() { //Gets adjacent nodes
         return adjacentNodes;
+    }
+
+    public String toString() {
+        return String.valueOf(number);
     }
 }

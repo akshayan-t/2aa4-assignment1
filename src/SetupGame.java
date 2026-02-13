@@ -4,14 +4,14 @@ public class SetupGame {
     private Node[] nodes = new Node[54];
     private Tile[] tiles = new Tile[19];
 
-    public SetupGame() {
+    public SetupGame() { //Constructor setup
         createTiles();
         createNodes();
         setResources();
         setNumber();
     }
 
-    public void createTiles() {
+    private void createTiles() { //Creates tiles with their connected nodes
         tiles[7] = new Tile(Arrays.asList(7,24,25,26,27,8));
 
         tiles[8] = new Tile(Arrays.asList(9,8,27,28,29,10));
@@ -51,7 +51,7 @@ public class SetupGame {
         tiles[13] = new Tile(Arrays.asList(42,40,18,17,39,41));
     }
 
-    public void createNodes() {
+    private void createNodes() { //Creates nodes with adjacent nodes
         nodes[0] = new Node(Arrays.asList(5,1,20));
 
         nodes[1] = new Node(Arrays.asList(0,2,6));
@@ -161,7 +161,7 @@ public class SetupGame {
         nodes[53] = new Node(Arrays.asList(24,52));
     }
 
-    public void setResources() {
+    private void setResources() { //Sets each tiles resource type
         int brick[] = {2,13,14};
         int lumber[] = {0,9,12,17};
         int ore[] = {3,8,10};
@@ -189,13 +189,13 @@ public class SetupGame {
 
     public Tile[] getTiles() {
         return tiles;
-    }
+    } //Gets tiles
 
     public Node[] getNodes() {
         return nodes;
-    }
+    } //Gets nodes
 
-    public void setNumber() {
+    private void setNumber() { //Sets each tile's dice number
         tiles[0].setNumber(10);
         tiles[1].setNumber(11);
         tiles[2].setNumber(8);
@@ -215,9 +215,6 @@ public class SetupGame {
         tiles[16].setNumber(7);
         tiles[17].setNumber(2);
         tiles[18].setNumber(10);
-//        for (int i = 0; i < tiles.length; i++) {
-//            tiles[i].setNumber(i);
-//        }
         for (int i = 0; i < nodes.length; i++) {
             nodes[i].setNumber(i);
         }

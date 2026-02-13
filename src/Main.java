@@ -7,11 +7,11 @@ void main() {
 
     List<Player> players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
 
-    player1.placeSettlement(17);
-    player1.placeSettlement(27);
-    player1.placeSettlement(40);
+    board.placeSettlement(player1, 17);
+    board.placeSettlement(player1, 27);
+    board.placeSettlement(player1, 40);
 
-    PlayGame play = new PlayGame(20, players, board);
+    Gameplay play = new Gameplay(50, players, board);
     play.runGame();
 
 //    int turn = 1;
