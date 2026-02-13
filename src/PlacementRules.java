@@ -8,7 +8,7 @@ public class PlacementRules {
 
     public boolean canBuildSettlement(Player player, Node node, Board board) {
         for (Road road: player.getRoads()) {
-            if (road.getStart() == node && checkSettlement(node, board) && checkDistance(node, board) && player.getSettlementCount() < 5) {
+            if ((road.getStart() == node || road.getEnd() == node) && checkSettlement(node, board) && checkDistance(node, board) && player.getSettlementCount() < 5) {
                 if (player.getResources(Resource.BRICK) >= 1 && player.getResources(Resource.WOOD) >= 1 && player.getResources(Resource.SHEEP) >= 1 && player.getResources(Resource.WHEAT) >= 1) {
                     return true;
                 }
@@ -26,9 +26,9 @@ public class PlacementRules {
         return false;
     }
 
-    private boolean checkRoad(Player player, Node node, Node end, Board board) {
-        if ((node.checkRoadOwner(player))) { //Checks if player doesn't own road at current node
-            for (Road road: node.getRoads()) {
+    private boolean checkRoad(Player player, Node start, Node end, Board board) {
+        if (start.checkRoadOwner(player) && start.getAdjacentNodes().contains(end.getNumber())) { //Checks if player doesn't own road at current node
+            for (Road road: start.getRoads()) {
                 if (road.getEnd() == end) {
                     return false;
                 }
@@ -55,7 +55,7 @@ public class PlacementRules {
     }
 
     public boolean canPlaceRoad(Player player, Node start, Node end, Board board) {
-        if (player.getRoads().size() < 15) {
+        if (player.getRoads().size() < 15 && start.getAdjacentNodes().contains(end.getNumber())) {
             for (Road currentRoad: board.getRoads()) {
                 if ((currentRoad.getStart() == start && currentRoad.getEnd() == end) || (currentRoad.getStart() == end && currentRoad.getEnd() == start)) {
                     return false;

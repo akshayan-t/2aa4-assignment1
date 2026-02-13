@@ -6,8 +6,8 @@ public abstract class Building {
     public abstract int getResourceMult(); //Gets resource multiplier
     public Player getOwner() { //Gets owner
         return owner;
-    }
-    public Node getLocation() { //Gets owner
+    } //Gets owner
+    public Node getLocation() { //Gets location
         return location;
     }
 }

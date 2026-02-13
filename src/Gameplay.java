@@ -1,67 +1,82 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-public class Gameplay {
+public class Gameplay { //Class for running gameflow
     private Random rand = new Random();
-    private Board board;
-    private List<Player> players = new ArrayList<>();
-    private int turn = 0;
-    private int maxTurns;
+    private Board board; //Board
+    private List<Player> players = new ArrayList<>(); //List for players
+    private int turn = 0; //Current turn
+    private int maxTurns; //Max turns
 
-    public Gameplay (int maxTurns, List<Player> players, Board board) {
+    public Gameplay () { //Constructor
+        this.board = new Board();
+        this.maxTurns = Integer.parseInt(System.getenv("turns"));
+        Player player1 = new Player(1, board);
+        Player player2 = new Player(2, board);
+        Player player3 = new Player(3, board);
+        Player player4 = new Player(4, board);
+        this.players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
+    }
+
+    public Gameplay (int maxTurns, List<Player> players, Board board) { //Constructor for testing with customizable options
         this.board = board;
         this.maxTurns = maxTurns;
         this.players = players;
     }
 
-    public void runGame() {
+    public void runGame() { //Gameflow
+        if (maxTurns < 0 || maxTurns > 8192) { //If maxturns is valid
+            System.out.println("Error: Turns must be between 0 and 8192");
+            return;
+        }
         turn = 1;
         board.setTurn(turn);
-        roundOne();
-        printPoints();
+        roundOne(); //Round 1
+        printPoints(); //Prints points
         if (maxTurns > 1) {
             turn++;
             board.setTurn(turn);
-            roundTwo();
+            roundTwo(); //Round 2
             printPoints();
         }
         if (maxTurns > 2) {
-            while (turn < maxTurns) {
-                turn++;
-                board.setTurn(turn);
-                for (Player player : players) {
+            while (turn < maxTurns) { //Plays game until turn reaches max turns
+                turn++; //Increments turn each time
+                board.setTurn(turn); //Updates board's turn
+                for (Player player : players) { //For each player
                     System.out.print("Round " + turn + " / ");
-                    if (playRound(player)) {
+                    if (playRound(player)) { //Plays round, if player wins
                         System.out.println();
                         System.out.println("Player " + player.getPlayerNumber() + " wins!\n");
-                        printResults();
+                        printResults(); //Print win message and results
                         return;
                     }
                 }
-                printPoints();
+                printPoints(); //Prints points after each round
             }
         }
-        printResults();
+        printResults(); //Prints results if nobody wins
     }
 
-    private int rollDice() {
-        int die1 = rand.nextInt(6 - 1 + 1) + 1;
+    private int rollDice() { //Roll dice method
+        int die1 = rand.nextInt(6 - 1 + 1) + 1; //Creates two dice from 1-6
         int die2 = rand.nextInt(6 - 1 + 1) + 1;
-        int number = die1 + die2;
+        int number = die1 + die2; //Returns rolled number
         return number;
     }
 
-    private Node chooseNode() {
+    private Node chooseNode() { //Chooses random node
         int counter = 0;
-        while (true) {
+        while (true) { //While loop to choose node
             counter += 1;
             int node = rand.nextInt(54); //Number from 0 to 53
             int tileCount = board.getNodes(node).getTileSize();
-            if (tileCount == 3) {
+            if (tileCount == 3) { //Prioritizes nodes connected to 3 tiles
                 return board.getNodes(node);
             }
-            else if (counter >= 5 && tileCount == 2) {
+            else if (counter >= 5 && tileCount == 2) { //I
                 return board.getNodes(node);
             }
             else if (counter >= 10 && tileCount == 1) {
@@ -193,8 +208,6 @@ public class Gameplay {
             }
 
         }
-//        System.out.println();
-//        board.printResources();
         board.calcLongestRoad(players);
         System.out.println();
         return isGameOver(player);
@@ -243,7 +256,7 @@ public class Gameplay {
     public void printPoints() {
         System.out.print("Victory points: ");
         for (Player player : players) {
-            System.out.print(player.calcPoints(players, board) + ", ");
+            System.out.print(player.calcPoints(players, board) + " ");
         }
         System.out.println();
     }
@@ -251,13 +264,7 @@ public class Gameplay {
     public void printResults() {
         System.out.print("Final points: ");
         for (Player p : players) {
-            System.out.print(p.calcPoints(players, board) + ", ");
-        }
-        System.out.println("\n");
-        System.out.println(players.get(0).getSettlements());
-        System.out.println(players.get(0).getCities());
-        for (Road road: players.get(0).getRoads()) {
-            System.out.print(road.getStart() + " ");
+            System.out.print(p.calcPoints(players, board) + " ");
         }
     }
 

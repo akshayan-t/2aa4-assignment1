@@ -20,7 +20,7 @@ public class Road {
     public Player getOwner() {
         return owner;
     } //Gets owner
-    public void print() {
-        System.out.println(start + ", " + end);
+    public void printRoad() {
+        System.out.print("(" + getStart() + "," +  getEnd() + ") ");
     }
 }

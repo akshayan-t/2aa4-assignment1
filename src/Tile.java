@@ -26,14 +26,6 @@ public class Tile {
         return resource;
     } //Gets resources
 
-    public void print() { //Prints tiles + resrouce
-        System.out.println("Tile " + number + " Resource: " + resource);
-        for (int node: nodeLocations) {
-            System.out.print(node + " ");
-        }
-        System.out.println();
-    }
-
     public void setNumber(int number) {
         this.number = number;
     } //Sets tile number

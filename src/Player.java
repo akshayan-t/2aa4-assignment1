@@ -107,4 +107,21 @@ public class Player {
     public int getPlayerNumber() {
         return playerNumber;
     }
+
+    public void printBuildings() {
+        System.out.println("Player " + playerNumber + " buildings");
+        System.out.println("Settlements: " + getSettlements());
+        System.out.println("Cities: " + getCities());
+        System.out.print("Roads: ");
+        for (Road road: getRoads()) {
+            road.printRoad();
+        }
+    }
+
+    public void printResources() {
+        System.out.println("\nPlayer " + playerNumber + " resources");
+        for (Resource resource: Resource.values()) {
+            System.out.println(resource + ": " + resources.get(resource));
+        }
+    }
 }
