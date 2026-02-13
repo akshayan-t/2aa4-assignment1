@@ -2,7 +2,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
 
-public class Board {
+public class Board { //Class to act as board for game
     private HashMap<Resource, Integer> resources = new HashMap<>(); //Hashmap for resources
 
     private Node[] nodes = new Node[54]; //Nodes array

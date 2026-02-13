@@ -1,6 +1,6 @@
 public class Settlement extends Building {
 
-    public Settlement(Player owner, Node node) {
+    public Settlement(Player owner, Node node) { //Settlement method
         this.owner = owner;
         this.location = node;
     }

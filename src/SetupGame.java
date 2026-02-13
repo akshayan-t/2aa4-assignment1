@@ -1,6 +1,6 @@
 import java.util.Arrays;
 
-public class SetupGame {
+public class SetupGame { //Setup game class
     private Node[] nodes = new Node[54];
     private Tile[] tiles = new Tile[19];
 
@@ -215,7 +215,7 @@ public class SetupGame {
         tiles[16].setNumber(7);
         tiles[17].setNumber(2);
         tiles[18].setNumber(10);
-        for (int i = 0; i < nodes.length; i++) {
+        for (int i = 0; i < nodes.length; i++) { //Sets each node's number
             nodes[i].setNumber(i);
         }
     }

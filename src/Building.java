@@ -1,4 +1,4 @@
-public abstract class Building {
+public abstract class Building { //Abstract building class
     protected Player owner;
     protected Node location;
 

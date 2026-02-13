@@ -1,17 +1,17 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class Node {
-    private int number;
-    private Building building;
-    private Player owner;
-    private List<Road> roads = new ArrayList<>();
-    private List<Integer> adjacentNodes = new ArrayList<>();
-    private List<Tile> tiles = new ArrayList<>();
+public class Node { //Node class
+    private int number; //Node number
+    private Building building; //Building
+    private Player owner; //Owner
+    private List<Road> roads = new ArrayList<>(); //Road list
+    private List<Integer> adjacentNodes = new ArrayList<>(); //Adjacent node list
+    private List<Tile> tiles = new ArrayList<>(); //Tile list
 
     public Node(List<Integer> adjacentNodes) {
         this.adjacentNodes = new ArrayList<>(adjacentNodes);
-    }
+    } //Constructor
 
     public void addTile(Tile tile) {
         tiles.add(tile);
@@ -33,19 +33,19 @@ public class Node {
 
     public void setOwner(Player owner) { //Sets owner
         this.owner = owner;
-    }
+    } //Setter
 
     public Building getBuilding() { //Gets building
         return building;
-    }
+    } //Getter
 
     public Player getOwner() { //Gets owner
         return owner;
-    }
+    } //Getter
 
     public void addRoad(Road road) { //Adds road to list
         this.roads.add(road);
-    }
+    } //Adds road to list
 
     public boolean checkRoadOwner(Player player) { //Checks if player owns a road connected to this node
         for (Road road : this.roads) {
@@ -58,13 +58,13 @@ public class Node {
 
     public List<Road> getRoads() { //Gets list of roads
         return roads;
-    }
+    } //Getter
 
     public List<Integer> getAdjacentNodes() { //Gets adjacent nodes
         return adjacentNodes;
-    }
+    } //Getter
 
-    public String toString() {
+    public String toString() { //Returns string of node number
         return String.valueOf(number);
     }
 }

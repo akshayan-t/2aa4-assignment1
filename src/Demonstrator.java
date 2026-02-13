@@ -1,38 +1,39 @@
 import java.util.*;
 
-public class Main {
+public class Demonstrator { //Main class
     public void testOne() { //Testing building and wins
         System.out.println("Test One");
-        int turns = Integer.parseInt(System.getenv("turns"));
-        Board board = new Board();
-        Player player1 = new Player(1, board);
+        int turns = Integer.parseInt(System.getenv("turns")); //Gets turns
+        Board board = new Board(); //Makes new board
+        Player player1 = new Player(1, board); //Makes player for testing
 
         List<Player> players = new ArrayList<>(Arrays.asList(player1));
 
-        player1.updateResources(Resource.WOOD, 100);
+        player1.updateResources(Resource.WOOD, 100); //Maxes player's resources
         player1.updateResources(Resource.BRICK, 100);
         player1.updateResources(Resource.WHEAT, 100);
         player1.updateResources(Resource.SHEEP, 100);
         player1.updateResources(Resource.ORE, 100);
 
-        board.placeSettlement(player1, 17);
+        board.placeSettlement(player1, 17); //Build settlement, city, and road
         board.upgradeCity(player1, 17);
         board.placeRoad(player1, 17, 18);
-        board.placeRoad(player1, 17, 500); //Testing impossible
+        board.placeRoad(player1, 17, 500); //Testing impossible roads
+        board.placeRoad(player1, 17, 50);
 
-        Gameplay play = new Gameplay(turns, players, board);
+        Gameplay play = new Gameplay(turns, players, board); //Creates testable gameflow
         play.runGame(); //Since player1 has > 7 resources, it will do at least one action every turn
-        player1.printBuildings();
+        player1.printBuildings(); //Prints final buildings
     }
 
     public void testTwo() { //Testing Resources
-        System.out.println("\n\nTest Two");
+        System.out.println("\nTest Two");
         Board board = new Board();
         Player player1 = new Player(1, board);
 
         List<Player> players = new ArrayList<>(Arrays.asList(player1));
 
-        player1.updateResources(Resource.WOOD, 10);
+        player1.updateResources(Resource.WOOD, 10); //Updates resources
         player1.updateResources(Resource.BRICK, 10);
         player1.updateResources(Resource.WHEAT, 10);
         player1.updateResources(Resource.SHEEP, 10);
@@ -41,7 +42,7 @@ public class Main {
         player1.printResources(); //Shows current resource amounts
         board.printResources();
 
-        board.placeSettlement(player1, 17);
+        board.placeSettlement(player1, 17); //Places settlements and roads to mimic first 2 turns
         board.placeRoad(player1, 17, 18);
         board.placeSettlement(player1, 2);
         board.placeRoad(player1, 2, 3);
@@ -49,33 +50,32 @@ public class Main {
         player1.printResources(); //No changes since setup turn
         board.printResources();
 
-        board.upgradeCity(player1, 17);
+        board.upgradeCity(player1, 17); //Upgrade city
 
         player1.printResources(); //-1 wheat -2 ore
         board.printResources(); //+1 wheat +2 ore
 
-        board.setTurn(3); //Resources start being taken
+        board.setTurn(3); //Resources start being consumed after turn 2
         board.placeRoad(player1, 3, 4); // -1 wood and -1 brick
         board.placeSettlement(player1, 4); // -1 for wood, brick, wheat, sheep
 
         player1.printResources(); //In total, -2 wood, -2 brick, +1 wheat, +1 sheep
         board.printResources(); // +2 wood, +2 brick, -1 wheat, -1 sheep
 
-        player1.printBuildings();
+        player1.printBuildings(); //Prints constructed buildings
 
-        System.out.println("Tile 0 generating resources");
+        System.out.println("Tile 0 generating resources"); //Generates resources for tile 0
         board.getTiles()[0].makeResources(board); //+2 wood
 
         player1.printResources(); //+2 wood
         board.printResources(); //-2 wood;
     }
 
-    public void testThree() {
-        System.out.println("\n\nTest Three");
+    public void testThree() { //Tests roads and longest road
+        System.out.println("\nTest Three");
         System.out.println();
         int turns = Integer.parseInt(System.getenv("turns"));
         Board board = new Board();
-        ActionController controller = new ActionController(board);
         Player player1 = new Player(1, board);
         Player player2 = new Player(2, board);
 
@@ -83,16 +83,17 @@ public class Main {
         Gameplay play = new Gameplay(turns, players, board);
 
         board.placeRoad(player1, 0, 1);
+        board.placeRoad(player1, 1, 0); //Tests for duplicate road
         board.placeRoad(player1, 0, 20);
         board.placeRoad(player1, 20, 19);
         board.placeRoad(player1, 20, 22);
         board.placeRoad(player1, 1, 2);
         board.placeRoad(player1, 2, 3);
         board.placeRoad(player1, 0, 5);
-        board.calcLongestRoad(players);
+        board.calcLongestRoad(players); //Calculates longest road
         board.printLongestRoad(); //Longest road is 5
 
-        play.printPoints();
+        play.printPoints(); //Prints current points, player 1 should have 2 VP from longest road
 
         board.placeSettlement(player2, 0); //If other player settlement blocks road
         board.calcLongestRoad(players);
@@ -101,28 +102,29 @@ public class Main {
     }
 
     public void testFour() { //Showing build limit
-        System.out.println("\n\nTest Four");
+        System.out.println("\nTest Four");
         Board board = new Board();
         Player player1 = new Player(1, board);
 
-        board.placeSettlement(player1, 18);
+        board.placeSettlement(player1, 18); //Builds multiple settlements
         board.placeSettlement(player1, 4);
         board.placeSettlement(player1, 9);
         board.placeSettlement(player1, 33);
         board.placeSettlement(player1, 41);
         board.placeSettlement(player1, 52);
         board.placeSettlement(player1, 0);
+        board.placeSettlement(player1, 100);
         player1.printBuildings(); //Max 5 settlements
     }
 
-    public void playGame() {
-        System.out.println("\n\nTest Gameplay");
-        Gameplay play = new Gameplay();
+    public void playGame() { //Runs game
+        System.out.println("\nTest Gameplay");
+        Gameplay play = new Gameplay(); //Shows how game should be run without testing or creating players or board beforehand
         play.runGame();
     }
 
-    public static void main(String[] args) {
-        Main main = new Main();
+    public static void main(String[] args) { //Main method for testing
+        Demonstrator main = new Demonstrator();
         main.testOne();
         main.testTwo();
         main.testThree();

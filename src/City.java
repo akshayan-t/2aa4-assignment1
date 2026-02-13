@@ -1,4 +1,4 @@
-public class City extends Building {
+public class City extends Building { //City class
     public City(Player owner, Node node) {
         this.owner = owner;
         this.location = node;
