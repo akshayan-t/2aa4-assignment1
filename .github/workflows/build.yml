@@ -30,7 +30,7 @@ jobs:
           javac -d out @sources.txt
 
       - name: Run Tests		
-        run:  ./src/*
+        run:  ./src/Demonstrator.java
 
       # This will use sonar-project.properties in the repo root
       - name: SonarCloud Scan
