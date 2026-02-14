@@ -1,12 +1,12 @@
 import java.security.SecureRandom;
 import java.util.*;
 
-public class ActionController { //Class for performing actions
+public class TurnController { //Class for performing actions during players turns
     private Board board; //Private board
     private PlacementRules rules = new PlacementRules(); //Private rules
     private SecureRandom rand = new SecureRandom();
 
-    public ActionController(Board board) {
+    public TurnController(Board board) {
         this.board = board;
     } //Constructor
 

@@ -9,7 +9,7 @@ public class Board { //Class to act as board for game
     private Tile[] tiles = new Tile[19]; //Tiles array
     private List<Road> roads = new ArrayList<>(); //Road list
     private int turn = 0; //Turn counter
-    private ActionController actionController;
+    private TurnController turnController;
 
     private Player longestRoad = null; //Longest road owner
     private int longestRoadLength = 0; //Longest road length
@@ -29,7 +29,7 @@ public class Board { //Class to act as board for game
         resources.put(Resource.SHEEP, 19);
         resources.put(Resource.ORE, 19);
 
-        this.actionController = new ActionController(this);
+        this.turnController = new TurnController(this);
     }
 
     public Tile[] getTiles() {
@@ -77,31 +77,31 @@ public class Board { //Class to act as board for game
     }
 
     public boolean placeSettlement(Player player, Node node) { //Places settlement
-        return actionController.handleBuildSettlement(player, node, turn); //Calls action controller method
+        return turnController.handleBuildSettlement(player, node, turn); //Calls action controller method
     }
 
     public boolean placeSettlement(Player player, int node) { //Places settlement, int given for testing
         if (0 <= node && node < nodes.length) { //If node is in range
-            return actionController.handleBuildSettlement(player, getNodes(node), turn);
+            return turnController.handleBuildSettlement(player, getNodes(node), turn);
         }
         return false;
     }
 
     public boolean upgradeCity(Player player, Node node) { //Upgrades settlement to city
-        return actionController.handleUpgradeCity(player, node);
+        return turnController.handleUpgradeCity(player, node);
     }
 
     public boolean upgradeCity(Player player, int node) { //Upgrades to city, method for testing
-        return actionController.handleUpgradeCity(player, getNodes(node));
+        return turnController.handleUpgradeCity(player, getNodes(node));
     }
 
     public boolean placeRoad(Player player, Node start, Node end) { //Places road
-        return actionController.handleBuildRoad(player, start, end, turn);
+        return turnController.handleBuildRoad(player, start, end, turn);
     }
 
     public boolean placeRoad(Player player, int start, int end) { //Places road, method for testing
         if (0 <= start && start <= nodes.length && 0 <= end && end <= nodes.length) { //If ints given are in range
-            return actionController.handleBuildRoad(player, getNodes(start), getNodes(end), turn);
+            return turnController.handleBuildRoad(player, getNodes(start), getNodes(end), turn);
         }
         return false;
 
@@ -112,7 +112,7 @@ public class Board { //Class to act as board for game
     }
 
     public List<Boolean> checkActions(Player player, List<Node> settlementNodes, List<Node> roadNodes) { //Checks possible actions
-        return new ArrayList<>(actionController.checkActions(player, settlementNodes, roadNodes)); //Returns list of actions
+        return new ArrayList<>(turnController.checkActions(player, settlementNodes, roadNodes)); //Returns list of actions
     }
 
     public void setLongestRoad(Player player) { //Sets longest road owner to player
@@ -128,7 +128,7 @@ public class Board { //Class to act as board for game
         int longestRoad = 0;
         int length = 0;
         for (Player player: players) { //Checks each player's longest road
-            length = actionController.calcLongestRoad(player);
+            length = turnController.calcLongestRoad(player);
             if (length > longestRoad) {
                 owner = player; //If player has longest, sets owner to player
                 longestRoad = length;
