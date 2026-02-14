@@ -1,10 +1,10 @@
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 public class Gameplay { //Class for running gameflow
-    private Random rand = new Random();
+    private SecureRandom rand = new SecureRandom();
     private Board board; //Board
     private List<Player> players = new ArrayList<>(); //List for players
     private int turn = 0; //Current turn
