@@ -29,16 +29,10 @@ jobs:
           find org.eclipse.papyrus.javagen.Catan/src-gen -name "*.java" > sources.txt
           javac -d out @sources.txt
 
-      # This will use sonar-project.properties in the repo root
-      - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v6
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          
       - name: Code Coverage Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
-          filename: coverage/src/*/coverage.cobertura.xml
+          filename: coverage/src/coverage.cobertura.xml
           badge: true
           fail_below_min: true
           format: markdown
@@ -47,5 +41,13 @@ jobs:
           indicators: true
           output: both
           thresholds: '60 80'
+
+      # This will use sonar-project.properties in the repo root
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          
+
 
           
