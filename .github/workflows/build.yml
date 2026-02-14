@@ -22,6 +22,10 @@ jobs:
         with:
           distribution: "temurin"
           java-version: "21"
+          cache: maven
+          
+      - name: Run Tests		
+        run:  mvn -B package --file pom.xml
 
       - name: Compile Java (for Sonar)
         run: |
@@ -29,8 +33,6 @@ jobs:
           find org.eclipse.papyrus.javagen.Catan/src-gen -name "*.java" > sources.txt
           javac -d out @sources.txt
 
-      - name: Run Tests		
-        run:  javac -d out ./src/*
 
       # This will use sonar-project.properties in the repo root
       - name: SonarCloud Scan
