@@ -3,6 +3,7 @@ import java.util.*;
 public class ActionController { //Class for performing actions
     private Board board; //Private board
     private PlacementRules rules = new PlacementRules(); //Private rules
+    private Random rand = new Random();
 
     public ActionController(Board board) {
         this.board = board;
@@ -80,7 +81,6 @@ public class ActionController { //Class for performing actions
     }
 
     public List<Boolean> checkActions(Player player, List<Node> settlementNodes, List<Node> roadNodes) { //Check possible player actions
-        Random rand = new Random();
         boolean settlement = false; //Set booleans to represent actions
         boolean city = false;
         boolean road = false;
@@ -119,7 +119,7 @@ public class ActionController { //Class for performing actions
         int newMax = max; //Creates new max variable
         checkedRoads.add(road); //Adds current road to checked road
         int length = 0;
-        Node nextNode = null;
+        Node nextNode = road.getEnd();
         if (startNode == road.getStart()) { //Ensures next node is new node by flipping direction of road
             nextNode = road.getEnd();
         }
