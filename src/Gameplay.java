@@ -1,7 +1,5 @@
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 public class Gameplay { //Class for running gameflow
     private SecureRandom rand = new SecureRandom();
@@ -110,18 +108,23 @@ public class Gameplay { //Class for running gameflow
 
     private void roundOne() { //First round
         for (Player player: players) { //For each player
-            while (true) {
-                Node node = chooseNode(); //Chooses random node
-                if (board.placeSettlement(player, node) == true) { //Builds settlement
-                    while (true) {
-                        Node end = chooseAdjacentNode(node); //Gets adjacent node
-                        if (board.placeRoad(player, node, end) == true) { //Builds road and prints info
-                            System.out.println("Round 1 / " + player.getPlayerNumber() + ": built settlement at " + node + ", built road at (" + node + ", " + end + ")");
-                            break;
+            if (player instanceof HumanPlayer) {
+                commandLine(player);
+            }
+            else {
+                while (true) {
+                    Node node = chooseNode(); //Chooses random node
+                    if (board.placeSettlement(player, node) == true) { //Builds settlement
+                        while (true) {
+                            Node end = chooseAdjacentNode(node); //Gets adjacent node
+                            if (board.placeRoad(player, node, end) == true) { //Builds road and prints info
+                                System.out.println("Round 1 / " + player.getPlayerNumber() + ": built settlement at " + node + ", built road at (" + node + ", " + end + ")");
+                                break;
+                            }
                         }
+                        isGameOver(player); //Checks if cheater already won
+                        break;
                     }
-                    isGameOver(player); //Checks if cheater already won
-                    break;
                 }
             }
         }
@@ -129,89 +132,96 @@ public class Gameplay { //Class for running gameflow
 
     private void roundTwo() { //Second round
         for (int i=players.size()-1;i>=0;i--) { //Players play in reverse order
-            while (true) {
-                Node node = chooseNode(); //Chooses random node
-                if (board.placeSettlement(players.get(i), node) == true) { //If player places settlement
-                    while (true) {
-                        Node end = chooseAdjacentNode(node); //Chooses adjacent node
-                        if (board.placeRoad(players.get(i), node, end) == true) { //If player places road
-                            System.out.println("Round 2 / " + players.get(i).getPlayerNumber() + ": built settlement at " + node + ", built road at (" + node + ", " + end + ")");
-                            break; //Breaks
+            if (players.get(i) instanceof HumanPlayer) {
+                commandLine(players.get(i));
+            }
+            else {
+                while (true) {
+                    Node node = chooseNode(); //Chooses random node
+                    if (board.placeSettlement(players.get(i), node) == true) { //If player places settlement
+                        while (true) {
+                            Node end = chooseAdjacentNode(node); //Chooses adjacent node
+                            if (board.placeRoad(players.get(i), node, end) == true) { //If player places road
+                                System.out.println("Round 2 / " + players.get(i).getPlayerNumber() + ": built settlement at " + node + ", built road at (" + node + ", " + end + ")");
+                                break; //Breaks
+                            }
                         }
+                        isGameOver(players.get(i)); //Checks if game is over
+                        break;
                     }
-                    isGameOver(players.get(i)); //Checks if game is over
-                    break;
                 }
             }
         }
     }
 
     private boolean playRound(Player player) { //Method for playing rounds
-        System.out.print(player.getPlayerNumber() + ": "); //Prints player
-        makeResources(rollDice()); //Generates resources
-        int action = -100; //Sets action out of bounds
-        ArrayList<Node> settlementNodes = getSettlementNodes(player); //Gets settlement nodes
-        ArrayList<Node> roadNodes = getRoadNodes(player); //Gets road nodes
+        if (player instanceof HumanPlayer) {
+            commandLine(player);
+        }
+        else {
+            System.out.print(player.getPlayerNumber() + ": "); //Prints player
+            makeResources(rollDice(), player); //Generates resources
+            int action = -100; //Sets action out of bounds
+            ArrayList<Node> settlementNodes = getSettlementNodes(player); //Gets settlement nodes
+            ArrayList<Node> roadNodes = getRoadNodes(player); //Gets road nodes
 
-        if (player.getTotalResources() > 7) { //If player has 7+ resources, checks available actions
-            List<Boolean> actions = board.checkActions(player, getSettlementNodes(player), getRoadNodes(player)); //Passes new instances of settlement and road nodes to not alter originals
-            while (actions.size() > 0 && player.getTotalResources() > 7) { //While action can be done
-                if (isGameOver(player)) { //Checks if player wins
-                    return true;
-                }
-                action = rand.nextInt(actions.size()); //Chooses random action
-                if (actions.get(action) == true) { //If action true, breaks
-                    break;
-                }
-                else { //Else removes action
-                    actions.remove(action);
-                }
-                action = -100;
-            }
-
-            if (action == 1) { //Build city
-                while (settlementNodes.size() > 0) {
-                    int random = rand.nextInt(settlementNodes.size()); //Chooses random node
-                    Node node = settlementNodes.get(random);
-                    settlementNodes.remove(random);
-                    if (board.upgradeCity(player, node)) { //Upgrades settlement
-                        System.out.print(", upgraded city at node " + node);
-                        break;
-                    }
-                }
-            }
-            else if (action == 0 || action == 2) { //If player will build settlement or road
-                while (roadNodes.size() > 0 && player.getTotalResources() > 7) { //While available node to build
-                    if (isGameOver(player)) { //Checks for win
+            if (player.getTotalResources() > 7) { //If player has 7+ resources, checks available actions
+                List<Boolean> actions = board.checkActions(player, getSettlementNodes(player), getRoadNodes(player)); //Passes new instances of settlement and road nodes to not alter originals
+                while (actions.size() > 0 && player.getTotalResources() > 7) { //While action can be done
+                    if (isGameOver(player)) { //Checks if player wins
                         return true;
                     }
-                    int random = rand.nextInt(roadNodes.size());
-                    Node node = roadNodes.get(random);
-                    roadNodes.remove(random);
-                    if (action == 0) { //Build settlement
-                        if (board.placeSettlement(player, node)) {
-                            System.out.print(", built settlement at node " + node);
+                    action = rand.nextInt(actions.size()); //Chooses random action
+                    if (actions.get(action) == true) { //If action true, breaks
+                        break;
+                    } else { //Else removes action
+                        actions.remove(action);
+                    }
+                    action = -100;
+                }
+
+                if (action == 1) { //Build city
+                    while (settlementNodes.size() > 0) {
+                        int random = rand.nextInt(settlementNodes.size()); //Chooses random node
+                        Node node = settlementNodes.get(random);
+                        settlementNodes.remove(random);
+                        if (board.upgradeCity(player, node)) { //Upgrades settlement
+                            System.out.print(", upgraded city at node " + node);
                             break;
                         }
                     }
-                    else if (action == 2) { //Build road
-                        for (int end : node.getAdjacentNodes()) {
-                            if (board.placeRoad(player, node, board.getNodes(end))) {
-                                System.out.print(", built road at (" + node + ", " + end + ")");
+                } else if (action == 0 || action == 2) { //If player will build settlement or road
+                    while (roadNodes.size() > 0 && player.getTotalResources() > 7) { //While available node to build
+                        if (isGameOver(player)) { //Checks for win
+                            return true;
+                        }
+                        int random = rand.nextInt(roadNodes.size());
+                        Node node = roadNodes.get(random);
+                        roadNodes.remove(random);
+                        if (action == 0) { //Build settlement
+                            if (board.placeSettlement(player, node)) {
+                                System.out.print(", built settlement at node " + node);
                                 break;
+                            }
+                        } else if (action == 2) { //Build road
+                            for (int end : node.getAdjacentNodes()) {
+                                if (board.placeRoad(player, node, board.getNodes(end))) {
+                                    System.out.print(", built road at (" + node + ", " + end + ")");
+                                    break;
+                                }
                             }
                         }
                     }
                 }
-            }
 
+            }
         }
         board.calcLongestRoad(players); //Calculates longest road
         System.out.println();
         return isGameOver(player); //Checks if player wins
     }
 
-    private void makeResources(int number) {
+    private void makeResources(int number, Player player) {
         System.out.print("Rolled " + number);
         int total;
         Player owner1 = null;
@@ -227,6 +237,7 @@ public class Gameplay { //Class for running gameflow
                 }
                 break;
             case 7: //desert, no resources produced
+                activateRobber(player);
                 break;
             case 8:
                 owner1 = board.getTiles()[2].getOwner();
@@ -270,4 +281,116 @@ public class Gameplay { //Class for running gameflow
         return false;
     }
 
+    public void activateRobber(Player player) {
+        System.out.println("\nThe robber has been activated!");
+        Resource resource = null;
+        for (Player p : players) {
+            if (p != player) {
+                if (p.getTotalResources() > 7) {
+                    int newTotal = p.getTotalResources()/2;
+                    while (p.getTotalResources() > newTotal) {
+                        resource = chooseResource(p);
+                        p.updateResources(resource, -1);
+                        board.updateResources(resource, 1);
+                    }
+                }
+            }
+        }
+        Tile tile = chooseTile();
+        List<Player> owners = new ArrayList<>(tile.getOwners());
+        owners.remove(player);
+        owners.remove(null);
+        Iterator<Player> iterator = owners.iterator();
+        while (iterator.hasNext()) {
+            Player p = iterator.next();
+            if (p.getTotalResources() <= 0) {
+                iterator.remove();
+            }
+        }
+        if (owners.size() > 0) {
+            Player robbedPlayer = owners.get(rand.nextInt(owners.size()));
+            if (robbedPlayer != null) {
+                int currentResources = robbedPlayer.getTotalResources();
+                while (robbedPlayer.getTotalResources() == currentResources) {
+                    resource = chooseResource(robbedPlayer);
+                    System.out.print("Player " + robbedPlayer.getPlayerNumber() + " has been robbed! (-1 " + resource + ")");
+                    robbedPlayer.updateResources(resource, -1);
+                    player.updateResources(resource, 1);
+                }
+            }
+        }
+    }
+
+    public Resource chooseResource(Player player) {
+        Resource[] resources = Resource.values();
+        Resource resource = null;
+        while (true) {
+            resource = resources[rand.nextInt(resources.length)];
+            if (player.getResources(resource) > 0) {
+                break;
+            }
+        }
+        return resource;
+    }
+
+    public Tile chooseTile() {
+        Tile[] tiles = board.getTiles();
+        Tile tile = tiles[rand.nextInt(tiles.length)];
+        return tile;
+    }
+
+    public void commandLine(Player player) {
+        boolean rolled = false;
+        Scanner scan = new Scanner(System.in);
+        System.out.println("Enter command: ");
+        while (true) {
+            String command = scan.next();
+            if (command.equals("Go")) {
+                if (rolled == false) {
+                    System.out.println("Haven't rolled yet");
+                }
+                else {
+                    break;
+                }
+            }
+            else if (command.equals("Roll") && rolled == false) {
+                makeResources(rollDice(), player);
+                rolled = true;
+                System.out.println();
+            }
+            else if (command.equals("List")) {
+                player.printCards(board);
+            }
+            else if (command.equals("Build")) {
+                if (scan.next().equals("settlement")) {
+                    if (scan.hasNextInt()) {
+                        int node = scan.nextInt();
+                        if (board.placeSettlement(player, node)) {
+                            System.out.println("Built settlement at node " + node);
+                        }
+                    }
+                }
+                if (scan.next().equals("city")) {
+                    if (scan.hasNextInt()) {
+                        int node = scan.nextInt();
+                        if (board.upgradeCity(player, node)) {
+                            System.out.println("Upgraded city at node " + node);
+                        }
+                    }
+
+                }
+                if (scan.next().equals("road")) {
+                    if (scan.hasNextInt()) {
+                        int start = scan.nextInt();
+                        if (scan.hasNextInt()) {
+                            int end = scan.nextInt();
+                            if (board.placeRoad(player, start, end)) {
+                                System.out.println("Built road at (" + start + ", " + end + ")");
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

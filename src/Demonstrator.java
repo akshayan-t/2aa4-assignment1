@@ -123,6 +123,38 @@ public class Demonstrator { //Main class
         play.runGame();
     }
 
+    public void testRobber() {
+        System.out.println("Testing Robber");
+        int turns = Integer.parseInt(System.getenv("turns"));
+        Board board = new Board(); //Makes new board
+        Player player1 = new Player(1, board);
+        Player player2 = new Player(2, board);
+        Player player3 = new Player(3, board);
+        Player player4 = new Player(4, board);
+
+        List<Player> players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
+        Gameplay play = new Gameplay(turns, players, board);
+        for (Player player: players) {
+            player.updateResources(Resource.WOOD, 1); //Maxes player's resources
+            player.updateResources(Resource.BRICK, 2);
+            player.updateResources(Resource.WHEAT, 1);
+            player.updateResources(Resource.SHEEP, 2);
+            player.updateResources(Resource.ORE, 3);
+        }
+//        player1.printResources();
+//        player2.printResources();
+//        player3.printResources();
+//        player4.printResources();
+        board.printResources();
+        System.out.println("Robert has been activated!");
+        play.activateRobber(player1);
+        player1.printResources();
+        player2.printResources();
+        player3.printResources();
+        player4.printResources();
+        board.printResources();
+    }
+
     public static void main(String[] args) { //Main method for testing
         Demonstrator main = new Demonstrator();
         main.testOne();
@@ -130,5 +162,6 @@ public class Demonstrator { //Main class
         main.testThree();
         main.testFour();
         main.playGame();
+        main.testRobber();
     }
 }

@@ -1,5 +1,7 @@
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Tile {
     private int diceNumber; //Dice number
@@ -76,17 +78,18 @@ public class Tile {
     }
 
     public Player getOwner () { //Checks if only one player owns buildings at a tile
-        Player owner = null;
-        Player currentPlayer = null;
-        for (Node node: nodes) { //Checks if every node has same owner or null owner
-            currentPlayer = node.getOwner();
-            if (owner == null)  {
-                owner = currentPlayer;
-            }
-            else if (owner != currentPlayer && currentPlayer != null) { //If more than one player has building here
-                return null;
-            }
+        Set<Player> owners = getOwners();
+        if (owners.size() == 1) {
+            return owners.iterator().next();
         }
-        return owner;
+        return null;
+    }
+
+    public Set<Player> getOwners () { //Checks if only one player owns buildings at a tile
+        Set<Player> owners = new HashSet<>();
+        for (Node node: nodes) { //Checks if every node has same owner or null owner
+            owners.add(node.getOwner());
+        }
+        return owners;
     }
 }

@@ -124,4 +124,16 @@ public class Player {
             System.out.println(resource + ": " + resources.get(resource));
         }
     }
+
+    public void printCards(Board board) {
+        System.out.print("Resource Cards: ");
+        for (Resource resource: Resource.values()) {
+            int value = this.getResources(resource);
+            System.out.print(value + "x " + resource + ", ");
+        }
+        if (board.getLongestRoad() == this) {
+            System.out.print("1x Longest Road");
+        }
+        System.out.println();
+    }
 }
