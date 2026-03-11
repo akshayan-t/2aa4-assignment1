@@ -1,12 +1,13 @@
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Demonstrator { //Main class
     private ReadConfig readConfig = new ReadConfig();
     private int turns = 0;
- 
+
     public Demonstrator() {
         try {
             turns = readConfig.readTurns();
@@ -134,11 +135,9 @@ public class Demonstrator { //Main class
     }
 
     public void playGame() { //Runs game
-        System.out.println("\nAssignment 2 Demonstration");
-        System.out.println("Starting gameplay demonstration with JSON export for visualizer...");
+        System.out.println("\nTest Gameplay");
         Gameplay play = new Gameplay(turns); //Shows how game should be run without testing or creating players or board beforehand
         play.runGame();
-        System.out.println("Demonstration complete. Check state.json for exported game state.");
     }
 
     public void testRobber() {
@@ -152,7 +151,6 @@ public class Demonstrator { //Main class
         List<Player> players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
         Gameplay play = new Gameplay(turns, players, board);
         TurnController turnController = new TurnController(board);
-
         for (Player player: players) {
             player.updateResources(Resource.WOOD, 1); //Maxes player's resources
             player.updateResources(Resource.BRICK, 2);
@@ -160,7 +158,6 @@ public class Demonstrator { //Main class
             player.updateResources(Resource.SHEEP, 2);
             player.updateResources(Resource.ORE, 3);
         }
-
         board.placeSettlement(player2, 17);
         board.placeSettlement(player2, 21);
         board.placeSettlement(player2, 22);
@@ -168,15 +165,12 @@ public class Demonstrator { //Main class
         board.placeSettlement(player2, 10);
         board.placeSettlement(player3, 13);
         board.placeSettlement(player3, 0);
-
         player1.printResources();
         player2.printResources();
         player3.printResources();
         player4.printResources();
         board.printResources();
-
         turnController.activateRobber(player1, players);
-
         player1.printResources();
         player2.printResources();
         player3.printResources();
@@ -185,15 +179,41 @@ public class Demonstrator { //Main class
     }
 
 //    public void assignmentOneTests() {
-//        testOne();
-//        testTwo();
-//        testThree();
-//        testFour();
-//        playGame();
+//        main.testOne();
+//        main.testTwo();
+//        main.testThree();
+//        main.testFour();
+//        main.playGame();
 //    }
 
-    public static void main(String[] args) { //Main method for Assignment 2 demonstration
+    public static void main(String[] args) { //Main method for testing
         Demonstrator main = new Demonstrator();
+//        main.testOne();
+//        main.testTwo();
+//        main.testThree();
+//        main.testFour();
         main.playGame();
+//        main.testRobber();
+        //        String[] inputs = {"Roll", "Go", "List", "Build settlement 5", "Build road 1, 2", "Build city 1"};
+//        String allInputs = String.join("\n", inputs);
+//        System.setIn(new ByteArrayInputStream(allInputs.getBytes()));
+//        String[] inputs = {"Roll", "Go", "List", "Build settlement 5", "Build road 1, 2", "Build city 1"};
+//        String regex = "^(?<command>Roll|Go|List|Build (?<building>settlement|city|road (?<fromNodeId>(\\d+,))?)? (?<nodeId>\\d+))?$";
+//        Pattern pattern = Pattern.compile(regex);
+//
+//        for (String input : inputs) {
+//            Matcher matcher = pattern.matcher(input);
+//            if (matcher.matches()) {
+//                if (matcher.group("building") == null) {
+//                    System.out.println("Roll");
+//                }
+//                String aaa[] = matcher.group("command").split(" ");
+//                System.out.println("Command: " + aaa[0]);
+//                System.out.println("Sub: " + matcher.group("building"));
+//                System.out.println("Args: " + matcher.group("nodeId"));
+//                System.out.println("Chunga: " + matcher.group("fromNodeId"));
+//                System.out.println("---");
+//            }
+//        }
     }
 }

@@ -114,7 +114,7 @@ public class Board { //Class to act as board for game
         this.turn = turn;
     }
 
-    public List<Boolean> checkActions(Player player, List<Node> settlementNodes, List<Node> roadNodes) { //Checks possible actions
+    public List<PlayerCommand> checkActions(Player player, List<Node> settlementNodes, List<Node> roadNodes) { //Checks possible actions
         return new ArrayList<>(turnController.checkActions(player, settlementNodes, roadNodes)); //Returns list of actions
     }
 

@@ -19,6 +19,7 @@ public class TurnController { //Class for performing actions during players turn
     }
 
     public boolean handleBuildSettlement(Player player, Node node, int turn) { //Building settlements
+
         if (turn <= 2) { //If starting phase
             if (!rules.canPlaceSettlement(player, node, board)) { //If player cannot place Settlement
                 return false;
@@ -75,7 +76,8 @@ public class TurnController { //Class for performing actions during players turn
         return true;
     }
 
-    public List<Boolean> checkActions(Player player, List<Node> settlementNodes, List<Node> roadNodes) { //Check possible player actions
+    public List<PlayerCommand> checkActions(Player player, List<Node> settlementNodes, List<Node> roadNodes) { //Check possible player actions
+        List<PlayerCommand> commands = new ArrayList<>();
         boolean settlement = false; //Set booleans to represent actions
         boolean city = false;
         boolean road = false;
@@ -85,6 +87,7 @@ public class TurnController { //Class for performing actions during players turn
             settlementNodes.remove(random); //Removes node once checked
             if (rules.canUpgradeCity(player, node)) { //If true, city = true and break
                 city = true;
+                commands.add(new BuildCityCommand(node.getNumber()));
                 break;
             }
         }
@@ -94,11 +97,13 @@ public class TurnController { //Class for performing actions during players turn
             roadNodes.remove(random);
             if (rules.canBuildSettlement(player, node, board) && settlement == false) { //If player can build settlement
                 settlement = true;
+                commands.add(new BuildSettlementCommand(node.getNumber()));
             }
             if (road == false) {
                 for (int end : node.getAdjacentNodes()) { //If road not true yet, for every road
                     if (rules.canBuildRoad(player, node, board.getNodes(end), board)) { //Checks if player can build road at connected node
                         road = true;
+                        commands.add(new BuildRoadCommand(node.getNumber(), end));
                     }
                 }
             }
@@ -106,7 +111,7 @@ public class TurnController { //Class for performing actions during players turn
                 break;
             }
         }
-        return Arrays.asList(settlement, city, road); //Returns list of booleans
+        return commands; //Returns list of booleans
     }
 
     private int getLongestRoad(Player player, int max, Road road, Set<Road> checkedRoads, Node startNode) { //Recursive function to calculate longest road
@@ -190,6 +195,13 @@ public class TurnController { //Class for performing actions during players turn
 
     public void activateRobber(Player player, List<Player> players) {
         robberController.activateRobber(player, players, board);
+    }
+
+    public int rollDice() { //Roll dice method
+        int die1 = rand.nextInt(6 - 1 + 1) + 1; //Creates two dice from 1-6
+        int die2 = rand.nextInt(6 - 1 + 1) + 1;
+        int number = die1 + die2; //Returns rolled number
+        return number;
     }
 
 }
