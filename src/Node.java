@@ -67,10 +67,4 @@ public class Node { //Node class
     public String toString() { //Returns string of node number
         return String.valueOf(number);
     }
-    
-    public int getNodeId() {
-        return number;
 }
-}
-
-

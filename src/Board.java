@@ -10,7 +10,7 @@ public class Board { //Class to act as board for game
     private List<Road> roads = new ArrayList<>(); //Road list
     private int turn = 0; //Turn counter
     private TurnController turnController;
- 
+
     private Player longestRoad = null; //Longest road owner
     private int longestRoadLength = 0; //Longest road length
 
@@ -61,10 +61,6 @@ public class Board { //Class to act as board for game
         return resources.get(resource);
     } //Getter
 
-    public HashMap<Resource, Integer> getResources() {
-        return resources;
-    }
-
     public boolean checkResources(Resource resource, int change) { //Checks if resources would be 0 or greater if changed
         if (resource == null) {
             return false;
@@ -104,10 +100,11 @@ public class Board { //Class to act as board for game
     }
 
     public boolean placeRoad(Player player, int start, int end) { //Places road, method for testing
-        if (0 <= start && start < nodes.length && 0 <= end && end < nodes.length) {
+        if (0 <= start && start <= nodes.length && 0 <= end && end <= nodes.length) { //If ints given are in range
             return turnController.handleBuildRoad(player, getNodes(start), getNodes(end), turn);
         }
         return false;
+
     }
 
     public void setTurn(int turn) { //Setter
@@ -137,7 +134,7 @@ public class Board { //Class to act as board for game
                 longestRoad = length;
             }
             else if (length == longestRoad) {
-                owner = null;
+                owner = null; //
             }
         }
         if (getLongestRoad() != null && owner == null) { //If player currently has longest road and no player has surpassed them
@@ -148,6 +145,7 @@ public class Board { //Class to act as board for game
         }
         setLongestRoad(owner); //Sets longest road owner
         setLongestRoadLength(longestRoad); //Sets length
+
     }
 
     public void setLongestRoadLength(int length) { //Setter

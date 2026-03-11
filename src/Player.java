@@ -10,6 +10,7 @@ public class Player {
     private List<Road> roads = new ArrayList<>();
     private List<Building> buildings = new ArrayList<>();
     private PlayerColour colour;
+    private PlayerTurnController controller;
 
     public Player(int playerNumber, Board board) { //Constructor
         this.playerNumber = playerNumber;
@@ -18,11 +19,16 @@ public class Player {
         resources.put(Resource.WHEAT, 0);
         resources.put(Resource.SHEEP, 0);
         resources.put(Resource.ORE, 0);
+        controller = new BotTurnController();
     }
- 
+
     public Player (int playerNumber, Board board, PlayerColour colour) {
         this(playerNumber, board);
         this.colour = colour;
+    }
+
+    public PlayerTurnController getController() {
+        return controller;
     }
 
     public int getResources(Resource resource) {
@@ -146,17 +152,5 @@ public class Player {
         if (board.getLongestRoad() == this) {
             System.out.print("1x Longest Road");
         }
-        System.out.println();
     }
-
-    public HashMap<Resource, Integer> getResources() {
-        return resources;
-    }
-
-    public PlayerColour getColour() {
-        return colour;
-    }
-
 }
-
-
