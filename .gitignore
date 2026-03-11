@@ -4,3 +4,8 @@ bin/
 .classpath
 .project
 .DS_Store
+state.json
+visualize/.venv/
+visualize/catanatron/
+visualize/scraped_boards/
+__pycache__/
