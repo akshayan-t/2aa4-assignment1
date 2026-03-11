@@ -92,4 +92,8 @@ public class Tile {
         }
         return owners;
     }
+
+    public List<Integer> getNodeLocations() {
+        return nodeLocations;
+}
 }
