@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -13,16 +12,29 @@ public class BotTurnController extends PlayerTurnController {
         turnController.makeResources(turnController.rollDice(), player, players); //Generates resources
         game.setTurnPhase(TurnPhase.ROLLED); //Sets phase to rolled
 
-        while (player.getTotalResources() > 7) { //If player has 7+ resources, checks available actions
+        while (true) {
             if (game.isGameOver(player)) { //Checks for win
                 return;
             }
+
             PlayerCommand command = botRules.chooseNextCommand(game, turnController, commandManager); //Gets command
             if (command == null) {
                 break;
             }
+
             System.out.print(", ");
-            command.execute(game, turnController); //Executes command
+            CommandResult result = command.execute(game, turnController); //Executes command
+
+            if (result == null) {
+                break;
+            }
+
+            // Prevent infinite loops if somehow a zero-cost / non-progress action gets chosen
+            if (!(command instanceof BuildRoadCommand) &&
+                !(command instanceof BuildSettlementCommand) &&
+                !(command instanceof BuildCityCommand)) {
+                break;
+            }
         }
     }
 
@@ -81,7 +93,7 @@ public class BotTurnController extends PlayerTurnController {
     }
 
     private Node chooseAdjacentNode(Node node, Board board) { //Chooses random adjacent node
-        ArrayList<Integer> nodeList = (ArrayList)node.getAdjacentNodes();
+        List<Integer> nodeList = node.getAdjacentNodes();
         int adjNode = nodeList.get(rand.nextInt(nodeList.size()));
         return board.getNodes(adjNode); //Returns adjacent node
     }
