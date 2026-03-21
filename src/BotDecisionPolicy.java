@@ -16,7 +16,6 @@ Constraint 3:
 
 Constraints are evaluated in priority order before R3.2 scoring.
 */
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
