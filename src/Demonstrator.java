@@ -202,7 +202,7 @@ public class Demonstrator { //Main class
 //        main.testTwo();
 //        main.testThree();
 //        main.testFour();
-        main.playGame(); //Game initialized with 1 human player, 3 computer players, to change players go to Gameplay constructor
+        main.playGame(); //Game initialized with 1 human player, 3 computer players, to change players go to Gameplay constructor and change HumanPlayer to ComputerPlayer
 //        main.testRobber(); //Tests robber robbing someone
         main.testUndo();
     }
