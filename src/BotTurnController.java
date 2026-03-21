@@ -5,6 +5,7 @@ public class BotTurnController extends PlayerTurnController {
     private Random rand = new Random();
     private BotDecisionPolicy botRules = new BotDecisionPolicy();
     private CommandManager commandManager = new CommandManager();
+    private BenefitScoringStrategy strategy = new BenefitScoringStrategy();
 
     public void takeTurn(Gameplay game, TurnController turnController) { //Runs turns after first 2 turns
         Player player = game.getCurrentPlayer();
@@ -17,7 +18,7 @@ public class BotTurnController extends PlayerTurnController {
                 return;
             }
 
-            PlayerCommand command = botRules.chooseNextCommand(game, turnController, commandManager); //Gets command
+            PlayerCommand command = botRules.chooseNextCommand(game, turnController, strategy); //Gets command
             if (command == null) {
                 break;
             }

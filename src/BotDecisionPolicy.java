@@ -16,6 +16,7 @@ Constraint 3:
 
 Constraints are evaluated in priority order before R3.2 scoring.
 */
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -24,9 +25,8 @@ import java.util.Set;
 
 public class BotDecisionPolicy {
     private Random rand = new Random();
-    private BenefitScoringStrategy strategy = new BenefitScoringStrategy();
 
-    public PlayerCommand chooseNextCommand(Gameplay game, TurnController turnController, CommandManager commandManager) {
+    public PlayerCommand chooseNextCommand(Gameplay game, TurnController turnController, MoveScoringStrategy strategy) {
         Board board = game.getBoard();
         Player player = game.getCurrentPlayer();
 
@@ -216,6 +216,7 @@ public class BotDecisionPolicy {
                 seen.add(road.getEnd().getNumber());
             }
         }
+
         return nodes;
     }
 }
